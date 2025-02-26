@@ -1,15 +1,20 @@
 import { supabase } from "./supabase";
+import dotenv from "dotenv";
+import axios from "axios";
 // --------------------------------------------------
+
+dotenv.config();
 
 type Conversation = {
     id: string;
     messages: { date: string }[];
     client_number: string;
-    client_name?: string;
+    client_name: string;
     notification_1: boolean;
     notification_3: boolean;
     notification_5: boolean;
     notifications: boolean;
+    service: string;
 };
 
 // Función principal para verificar conversaciones y enviar notificaciones
@@ -20,7 +25,7 @@ const checkConversations = async (): Promise<void> => {
   const { data: conversations, error } = await supabase
     .from("chat_history")
     .select("*")
-    .eq("notification", true);
+    .eq("notifications", true);
   
   if (error) {
     console.error("Error fetching conversations:", error);
@@ -66,20 +71,23 @@ const checkConversations = async (): Promise<void> => {
     // Enviar un recordatorio después de 1 minuto
     if (timeDiff >= 1 * 60 * 1000 && timeDiff < 2 * 60 * 1000 && !notification_1) {
       simulateMessage(conversation.client_number, conversation.client_name, "Reminder after 1 minute");
+      await sendTemplate(conversation.client_number, conversation.client_name, conversation.service);
       await markNotification_1(conversation.id);
       console.log('notification_1:', notification_1);
     }
   
     // Enviar un recordatorio después de 3 minutos
     if (timeDiff >= 3 * 60 * 1000 && timeDiff < 5 * 60 * 1000 && !notification_3) {
-        simulateMessage(conversation.client_number, conversation.client_name, "Reminder after 3 minutes");
-        await markNotification_3(conversation.id);
-        console.log('notification_3:', notification_3);
+      simulateMessage(conversation.client_number, conversation.client_name, "Reminder after 3 minutes");
+      await sendTemplate(conversation.client_number, conversation.client_name, conversation.service);
+      await markNotification_3(conversation.id);
+      console.log('notification_3:', notification_3);
     }
 
     // Enviar un recordatorio final después de 5 minutos
     if (timeDiff >= 5 * 60 * 1000 && timeDiff < 6 * 60 * 1000 && !notification_5) {
         simulateMessage(conversation.client_number, conversation.client_name, "Final reminder after 5 minutes");
+        await sendTemplate(conversation.client_number, conversation.client_name, conversation.service);
         await markNotification_5(conversation.id);
         console.log('notification_5:', notification_5);
         // await markNotification(conversation.id);
@@ -98,7 +106,7 @@ const simulateMessage = (phoneNumber: string, clientName: string = 'señor usuar
 const markNotification = async (conversationId: string): Promise<void> => {
   await supabase
     .from("chat_history")
-    .update({ notification: false })
+    .update({ notifications: false })
     .eq("id", conversationId);
 };
 
@@ -124,6 +132,27 @@ const markNotification_5 = async (conversationId: string): Promise<void> => {
       .from("chat_history")
       .update({ notification_5: true })
       .eq("id", conversationId);
+};
+
+const sendTemplate = async (phoneNumber: string, name: string, service: string): Promise<void> => {
+  try {
+    const response = await axios.post('http://localhost:3020/rusell/send-template', {
+      to: phoneNumber,
+      name: name,
+      service: service,
+      templateId: 'HXa0168c042624758267465be5f5d1635f',
+    });
+
+    console.log('Response:', response.data);
+  } catch (error: any) {
+    if (error.response) {
+      console.error('Error:', error.response.data);
+    } else if (error.request) {
+      console.error('Error: No response received from server', error.request);
+    } else {
+      console.error('Error:', error.message);
+    }
+  }
 };
  
 export { checkConversations };

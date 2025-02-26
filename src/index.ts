@@ -26,7 +26,7 @@ app.options('*', cors());
 // schedule.scheduleJob('*/1 * * * *', checkConversations); // Cada minuto
 // schedule.scheduleJob("0 * * * *", checkConversations); // Cada hora
 
-schedule.scheduleJob("0 * * * *", async () => {
+schedule.scheduleJob("*/1 * * * *", async () => {
   console.log("Running cron job...");
   await checkConversations();
 });

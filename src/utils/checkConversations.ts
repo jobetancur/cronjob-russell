@@ -86,11 +86,11 @@ const checkConversations = async (): Promise<void> => {
 
     // Enviar un recordatorio final después de 5 minutos
     if (timeDiff >= 5 * 60 * 1000 && timeDiff < 6 * 60 * 1000 && !notification_5) {
-        simulateMessage(conversation.client_number, conversation.client_name, "Final reminder after 5 minutes");
-        await sendTemplate(conversation.client_number, conversation.client_name, conversation.service);
-        await markNotification_5(conversation.id);
-        console.log('notification_5:', notification_5);
-        // await markNotification(conversation.id);
+      simulateMessage(conversation.client_number, conversation.client_name, "Final reminder after 5 minutes");
+      await sendTemplate(conversation.client_number, conversation.client_name, conversation.service);
+      await markNotification_5(conversation.id);
+      console.log('notification_5:', notification_5);
+      // await markNotification(conversation.id);
     }
     //! --------------------------------------------------
 

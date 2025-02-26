@@ -31,8 +31,10 @@ schedule.scheduleJob("0 * * * *", async () => {
   await checkConversations();
 });
 
+app.get('/russell/cronjob', (req, res) => {
+  res.send('Cron job running...');
+});
+
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
-
-// Programar la tarea cada minuto

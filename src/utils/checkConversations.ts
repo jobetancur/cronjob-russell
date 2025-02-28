@@ -72,7 +72,7 @@ const checkConversations = async (): Promise<void> => {
     if (timeDiff >= 1 * 60 * 1000 && timeDiff < 2 * 60 * 1000 && !notification_1) {
       simulateMessage(conversation.client_number, conversation.client_name, "Reminder after 1 minute");
       await sendTemplate(conversation.client_number, conversation.client_name, conversation.service);
-      await markNotification_1(conversation.id);
+      // await markNotification_1(conversation.id);
       console.log('notification_1:', notification_1);
     }
   
@@ -80,7 +80,7 @@ const checkConversations = async (): Promise<void> => {
     if (timeDiff >= 3 * 60 * 1000 && timeDiff < 5 * 60 * 1000 && !notification_3) {
       simulateMessage(conversation.client_number, conversation.client_name, "Reminder after 3 minutes");
       await sendTemplate(conversation.client_number, conversation.client_name, conversation.service);
-      await markNotification_3(conversation.id);
+      // await markNotification_3(conversation.id);
       console.log('notification_3:', notification_3);
     }
 
@@ -88,7 +88,7 @@ const checkConversations = async (): Promise<void> => {
     if (timeDiff >= 5 * 60 * 1000 && timeDiff < 6 * 60 * 1000 && !notification_5) {
       simulateMessage(conversation.client_number, conversation.client_name, "Final reminder after 5 minutes");
       await sendTemplate(conversation.client_number, conversation.client_name, conversation.service);
-      await markNotification_5(conversation.id);
+      // await markNotification_5(conversation.id);
       console.log('notification_5:', notification_5);
       // await markNotification(conversation.id);
     }

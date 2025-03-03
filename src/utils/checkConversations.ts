@@ -42,7 +42,7 @@ const checkConversations = async (): Promise<void> => {
     const lastMessage = conversation.messages[conversation.messages.length - 1];
     const lastMessageDate = new Date(lastMessage.date);
     const timeDiff = now.getTime() - lastMessageDate.getTime();
-    
+
     
     //* Producción --------------------------------------------------
     // Enviar un recordatorio después de 24 horas
@@ -137,7 +137,7 @@ const markNotification_5 = async (conversationId: string): Promise<void> => {
 
 const sendTemplate = async (phoneNumber: string, name: string, service: string): Promise<void> => {
   try {
-    const response = await axios.post('http://localhost:3020/rusell/send-template', {
+    const response = await axios.post('https://ultim.online/rusell/send-template', {
       to: phoneNumber,
       name: name,
       service: service,

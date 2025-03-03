@@ -31,10 +31,6 @@ schedule.scheduleJob("*/1 * * * *", async () => {
   await checkConversations();
 });
 
-app.get('/russell/cronjob', (req, res) => {
-  res.send('Cron job running...');
-});
-
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });

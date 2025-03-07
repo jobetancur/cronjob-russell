@@ -137,7 +137,7 @@ const markNotification_5 = async (conversationId: string): Promise<void> => {
 
 const sendTemplate = async (phoneNumber: string, name: string, service: string): Promise<void> => {
   try {
-    const response = await axios.post('https://ultim.online/rusell/send-template', {
+    const response = await axios.post('https://ultim.online/russell/send-template', {
       to: phoneNumber,
       name: name,
       service: service,

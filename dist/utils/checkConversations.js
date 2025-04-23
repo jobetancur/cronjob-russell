@@ -121,7 +121,7 @@ const markNotification_5 = (conversationId) => __awaiter(void 0, void 0, void 0,
 });
 const sendTemplate = (phoneNumber, name, service) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const response = yield axios_1.default.post('https://ultim.online/rusell/send-template', {
+        const response = yield axios_1.default.post('https://ultim.online/russell/send-template', {
             to: phoneNumber,
             name: name,
             service: service,

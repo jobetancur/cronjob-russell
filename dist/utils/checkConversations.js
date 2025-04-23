@@ -16,6 +16,7 @@ exports.checkConversations = void 0;
 const supabase_1 = require("./supabase");
 const dotenv_1 = __importDefault(require("dotenv"));
 const axios_1 = __importDefault(require("axios"));
+const checkUserName_1 = require("./checkUserName");
 // --------------------------------------------------
 dotenv_1.default.config();
 // Función principal para verificar conversaciones y enviar notificaciones
@@ -39,46 +40,67 @@ const checkConversations = () => __awaiter(void 0, void 0, void 0, function* () 
         const lastMessage = conversation.messages[conversation.messages.length - 1];
         const lastMessageDate = new Date(lastMessage.date);
         const timeDiff = now.getTime() - lastMessageDate.getTime();
+        let clientName;
+        // Si el campo conversation.client_name está vacío, buscar el nombre del cliente en la tabla users
+        if (!conversation.client_name) {
+            let checkUser = yield (0, checkUserName_1.checkUserName)(conversation.client_number);
+            if (checkUser) {
+                clientName = checkUser;
+                // Actualizar el nombre del cliente en la conversación ***
+                yield supabase_1.supabase
+                    .from("chat_history")
+                    // .from("chat_history")
+                    .update({ client_name: checkUser })
+                    .eq("id", conversation.id);
+                console.log("Updated client name:", checkUser);
+            }
+            else {
+                clientName = conversation.client_number;
+            }
+        }
+        else {
+            clientName = conversation.client_name;
+        }
         //* Producción --------------------------------------------------
         // Enviar un recordatorio después de 24 horas
         if (timeDiff >= 24 * 60 * 60 * 1000 && timeDiff < 48 * 60 * 60 * 1000 && isNotification && !notification_1) {
-            simulateMessage(conversation.client_number, conversation.client_name, "Reminder after 24 hours");
-            yield sendTemplate(conversation.client_number, conversation.client_name, conversation.service);
+            simulateMessage(conversation.client_number, clientName, "Reminder after 24 hours");
+            yield sendTemplate(conversation.client_number, clientName, conversation.service);
             yield markNotification_1(conversation.id);
         }
         // Enviar un recordatorio después de 3 días
         if (timeDiff >= 3 * 24 * 60 * 60 * 1000 && timeDiff < 4 * 24 * 60 * 60 * 1000 && isNotification && !notification_3) {
-            simulateMessage(conversation.client_number, conversation.client_name, "Reminder after 3 days");
-            yield sendTemplate(conversation.client_number, conversation.client_name, conversation.service);
+            simulateMessage(conversation.client_number, clientName, "Reminder after 3 days");
+            yield sendTemplate(conversation.client_number, clientName, conversation.service);
             yield markNotification_3(conversation.id);
         }
         // Enviar un recordatorio final después de 5 días
         if (timeDiff >= 5 * 24 * 60 * 60 * 1000 && timeDiff < 6 * 24 * 60 * 60 * 1000 && isNotification && !notification_5) {
-            simulateMessage(conversation.client_number, conversation.client_name, "Final reminder after 5 days");
-            yield sendTemplate(conversation.client_number, conversation.client_name, conversation.service);
+            simulateMessage(conversation.client_number, clientName, "Final reminder after 5 days");
+            yield sendTemplate(conversation.client_number, clientName, conversation.service);
             yield markNotification_5(conversation.id);
             yield markNotification(conversation.id);
         }
         //* --------------------------------------------------
         //! Pruebas --------------------------------------------------
         // Enviar un recordatorio después de 1 minuto
-        // if (timeDiff >= 1 * 60 * 1000 && timeDiff < 2 * 60 * 1000 && !notification_1) {
-        //   simulateMessage(conversation.client_number, conversation.client_name, "Reminder after 1 minute");
-        //   await sendTemplate(conversation.client_number, conversation.client_name, conversation.service);
+        // if (timeDiff >= 1 * 60 * 1000 && timeDiff < 2 * 60 * 1000 && isNotification && !notification_1) {
+        //   simulateMessage(conversation.client_number, clientName, "Reminder after 1 minute");
+        //   await sendTemplate(conversation.client_number, clientName, conversation.service);
         //   // await markNotification_1(conversation.id);
         //   console.log('notification_1:', notification_1);
         // }
         // // Enviar un recordatorio después de 3 minutos
-        // if (timeDiff >= 3 * 60 * 1000 && timeDiff < 5 * 60 * 1000 && !notification_3) {
-        //   simulateMessage(conversation.client_number, conversation.client_name, "Reminder after 3 minutes");
-        //   await sendTemplate(conversation.client_number, conversation.client_name, conversation.service);
+        // if (timeDiff >= 3 * 60 * 1000 && timeDiff < 5 * 60 * 1000 && isNotification && !notification_3) {
+        //   simulateMessage(conversation.client_number, clientName, "Reminder after 3 minutes");
+        //   await sendTemplate(conversation.client_number, clientName, conversation.service);
         //   // await markNotification_3(conversation.id);
         //   console.log('notification_3:', notification_3);
         // }
         // // Enviar un recordatorio final después de 5 minutos
-        // if (timeDiff >= 5 * 60 * 1000 && timeDiff < 6 * 60 * 1000 && !notification_5) {
-        //   simulateMessage(conversation.client_number, conversation.client_name, "Final reminder after 5 minutes");
-        //   await sendTemplate(conversation.client_number, conversation.client_name, conversation.service);
+        // if (timeDiff >= 5 * 60 * 1000 && timeDiff < 6 * 60 * 1000 && isNotification && !notification_5) {
+        //   simulateMessage(conversation.client_number, clientName, "Final reminder after 5 minutes");
+        //   await sendTemplate(conversation.client_number, clientName, conversation.service);
         //   // await markNotification_5(conversation.id);
         //   console.log('notification_5:', notification_5);
         //   // await markNotification(conversation.id);

@@ -14,9 +14,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const node_schedule_1 = __importDefault(require("node-schedule"));
 const checkConversations_1 = require("./utils/checkConversations");
-// Ejecutar el cronjob cada 1 minuto
 node_schedule_1.default.scheduleJob("0 * * * *", () => __awaiter(void 0, void 0, void 0, function* () {
     console.log("Running cron job...");
     yield (0, checkConversations_1.checkConversations)();
 }));
+//! Ejecutar el cronjob cada minuto (para pruebas)
+// schedule.scheduleJob("* * * * *", async () => {
+//   console.log("Running cron job...");
+//   await checkConversations();
+// });
 console.log("🚀 Cronjob iniciado y ejecutándose en segundo plano...");

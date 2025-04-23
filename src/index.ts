@@ -1,8 +1,13 @@
 import schedule from "node-schedule";
 import { checkConversations } from './utils/checkConversations';
 
-// Ejecutar el cronjob cada 1 minuto
-schedule.scheduleJob("0 * * * *", async () => {
+// schedule.scheduleJob("0 * * * *", async () => {
+//   console.log("Running cron job...");
+//   await checkConversations();
+// });
+
+// Ejecutar el cronjob cada minuto (para pruebas)
+schedule.scheduleJob("* * * * *", async () => {
   console.log("Running cron job...");
   await checkConversations();
 });

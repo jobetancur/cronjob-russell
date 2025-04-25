@@ -61,7 +61,7 @@ const checkConversations = async (): Promise<void> => {
         console.log("Updated client name:", checkUser);
 
       } else {
-        clientName = conversation.client_number;
+        clientName = conversation.client_name;
       }
     } else {
       clientName = conversation.client_name;
